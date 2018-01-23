@@ -7,9 +7,10 @@ copyright: MIT
 license: BSD3
 homepage: https://github.com/dmvianna/conduit-patents#readme
 extra-source-files:
-- README.md
+- README.org
 dependencies:
 - base >=4.7 && <5
+- csv-conduit
 executables:
   conduit-patents:
     main: Main.hs
