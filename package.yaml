@@ -1,0 +1,16 @@
+name: conduit-patents
+version: '0.1.0.0'
+category: Web
+author: Daniel Vianna
+maintainer: dmlvianna <at> gmail <dot> com
+copyright: MIT
+license: BSD3
+homepage: https://github.com/dmvianna/conduit-patents#readme
+extra-source-files:
+- README.md
+dependencies:
+- base >=4.7 && <5
+executables:
+  conduit-patents:
+    main: Main.hs
+    source-dirs: src

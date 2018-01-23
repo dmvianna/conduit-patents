@@ -1,0 +1,8 @@
+:set -XOverloadedStrings
+:set -XRecordWildCards
+:set -XDataKinds
+:set -XQuasiQuotes
+
+import Control.Exception (IOException)
+import qualified Control.Exception as Exception
+import qualified Data.Foldable as Foldable
