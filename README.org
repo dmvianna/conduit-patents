@@ -1,0 +1,41 @@
+#+TITLE: conduit-patents
+#+AUTHOR: Daniel Vianna
+#+DATE:<2018-01-23 Tue>
+#+INFOJS_OPT: path:http://orgmode.org/org-info.js
+#+INFOJS_OPT: toc:nil ltoc:nil view:info mouse:underline buttons:nil
+#+STARTUP: content
+#+TODO: TODO IN-PROGRESS WAITING DONE
+
+I'm learning how to parse big CSV files in Haskell. This is my [[https://github.com/dmvianna/framesy][fourth attempt]]. I'll be trying things (hopefully) that are almost directly translatable to my work, as parsing addresses out of free text. Good luck to me!
+
+* The dataset
+The data we'll be analysing are the [[https://ipaustralia.gov.au/about-us/economics-ip/ip-government-open-data][public records of Australian patents]]. You can get the CSV files from data.gov.au. No, I will not include 785 MB of data (compressed) in this repository. However you can find the =head= of that file in the =./data= directory. Obtained with
+
+=$ head -n 20 IPGOD.IPGOD122B_PAT_ABSTRACTS.csv > pat_abstracts.csv=
+
+* What I plan to achieve
+
+** TODO 1. Read a stream
+Read a ~CSV~ file as a stream, so I don't need to load the entire thing to work on it.
+
+** TODO 2. Inspect the stream
+Being able to inspect the stream using something like =take= or =show= with indexing. I assume I would be doing it in ~GHCi~.
+
+** TODO 3. Extract relevant info 
+from unstructured text, such as addresses. That's a big part of what I do for work, and the main motivation for looking beyond Python. I want to move away from regular expressions and do it fast.
+
+** TODO 4. Filter the stream
+After parsing we must be able to subset the stream according to boolean constraints. These must be composable.
+
+** TODO 5. Tabular results
+reshape results in tabular form as a prelude to exporting to ~CSV~ or database.
+
+** TODO 6. Group by
+At some point we will want to analyse results for such things like counts.
+
+** TODO 7. Output
+Encoding results back into an output file, or sending it to a database.
+
+* How can I achieve it?
+
+Finally, I eagerly welcome help to move this forward. Get in touch!
