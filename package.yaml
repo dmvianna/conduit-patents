@@ -10,7 +10,11 @@ extra-source-files:
 - README.org
 dependencies:
 - base >=4.7 && <5
+- bytestring
 - csv-conduit
+- text
+- vector
+
 executables:
   conduit-patents:
     main: Main.hs
