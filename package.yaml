@@ -9,10 +9,12 @@ homepage: https://github.com/dmvianna/conduit-patents#readme
 extra-source-files:
 - README.org
 dependencies:
+- addresses
 - base >=4.7 && <5
 - bytestring
 - csv-conduit
 - text
+- trifecta
 - vector
 
 executables:
