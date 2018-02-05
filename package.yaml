@@ -9,12 +9,16 @@ homepage: https://github.com/dmvianna/conduit-patents#readme
 extra-source-files:
 - README.org
 dependencies:
+- addresses
+- array
 - base >=4.7 && <5
 - bytestring
+- case-insensitive
 - csv-conduit
+- pretty-simple
 - text
+- trifecta
 - vector
-
 executables:
   conduit-patents:
     main: Main.hs
