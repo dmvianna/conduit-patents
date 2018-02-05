@@ -13,7 +13,6 @@ import qualified Data.Vector                 as V
 import           Text.Trifecta
 
 import           Addresses
-import           Lower                       (lowercase)
 
 csvset :: Char -> CSVSettings
 csvset c = CSVSettings {csvSep = c, csvQuoteChar = Just '"'}
@@ -29,7 +28,7 @@ data Abstracts = Abstracts
 instance FromField AuAddress where
   parseField s =
     case parseByteString (step auAddress)
-         mempty (lowercase s) of
+         mempty (foldCase s) of
       Success x -> pure x
       Failure e -> mzero
 
