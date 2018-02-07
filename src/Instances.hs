@@ -82,9 +82,28 @@ instance BoxNr AddressLocation where
 instance BoxNr AuAddress where
   boxNr (AuAddress x _) = boxNr x
 
+-- | Locality
+
+getLocality :: AuAddress -> Locality
+getLocality (AuAddress _ x) = x
+
+instance ToField Suburb where
+  toField (Suburb x) = encodeUtf8 x
+
+instance ToField State where
+  toField (State x) = encodeUtf8 x
+
+instance ToField Postcode where
+  toField (Postcode x) = encodeUtf8 x
+
+-- | Finalising
+
 instance ToNamedRecord Abstracts where
   toNamedRecord (Abstracts _id _abstract) =
     namedRecord [ "id" .= _id
                 , "addressType" .= addressType _abstract
                 , "boxNr" .= boxNr _abstract
+                , "suburb" .= (toField $ _suburb $ getLocality _abstract)
+                , "state" .= (toField $ _state $ getLocality _abstract)
+                , "postcode" .= (toField $ _postcode $ getLocality _abstract)
                 ]
