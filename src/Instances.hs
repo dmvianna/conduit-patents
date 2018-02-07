@@ -37,6 +37,8 @@ instance FromNamedRecord Abstracts where
 
 -- | Parse out
 
+-- | Address type
+
 addressType :: AuAddress -> B.ByteString
 addressType (AuAddress location locality) =
   case location of
@@ -53,8 +55,36 @@ flatBag :: Bag -> B.ByteString
 flatBag (Locked t)  = "locked bag"
 flatBag (Private t) = "private bag"
 
+-- | Po box number
+
+instance ToField Pobox where
+  toField (Gpo t) = encodeUtf8 t
+  toField (Po t)  = encodeUtf8 t
+
+instance ToField Bag where
+  toField (Locked t)  = encodeUtf8 t
+  toField (Private t) = encodeUtf8 t
+
+class BoxNr a where
+  boxNr :: a -> B.ByteString
+
+instance BoxNr Pobox where
+  boxNr = toField
+
+instance BoxNr Bag where
+  boxNr = toField
+
+instance BoxNr AddressLocation where
+  boxNr (APobox x)         = toField x
+  boxNr (ABag x)           = toField x
+  boxNr (AStreetAddress _) = mempty
+
+instance BoxNr AuAddress where
+  boxNr (AuAddress x _) = boxNr x
+
 instance ToNamedRecord Abstracts where
   toNamedRecord (Abstracts _id _abstract) =
     namedRecord [ "id" .= _id
                 , "addressType" .= addressType _abstract
+                , "boxNr" .= boxNr _abstract
                 ]
