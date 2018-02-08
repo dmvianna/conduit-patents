@@ -96,142 +96,98 @@ instance ToField State where
 instance ToField Postcode where
   toField (Postcode x) = encodeUtf8 x
 
--- || Street Number
+--  | AddressNumbers
 
--- | First
-
--- Prefix
-
-class FirstPrefix a where
+class AddressNumbers a where
   firstPrefix :: a -> B.ByteString
-
-instance FirstPrefix StreetNumber where
-  firstPrefix (One (Single (Prefix x) _ _))     = toField x
-  firstPrefix (Range (Single (Prefix x) _ _) _) = toField x
-
-instance FirstPrefix StreetAddress where
-  firstPrefix (StAddr x _ _) = firstPrefix x
-
-instance FirstPrefix AddressLocation where
-  firstPrefix (AStreetAddress x) = firstPrefix x
-  firstPrefix _                  = mempty
-
-instance FirstPrefix AuAddress where
-  firstPrefix (AuAddress x _) = firstPrefix x
-
--- Number
-
-class FirstNumber a where
   firstNumber :: a -> B.ByteString
-
-instance FirstNumber StreetNumber where
-  firstNumber (One (Single _ (Number x) _))     = toField x
-  firstNumber (Range (Single _ (Number x) _) _) = toField x
-
-instance FirstNumber StreetAddress where
-  firstNumber (StAddr x _ _) = firstNumber x
-
-instance FirstNumber AddressLocation where
-  firstNumber (AStreetAddress x) = firstNumber x
-  firstNumber _                  = mempty
-
-instance FirstNumber AuAddress where
-  firstNumber (AuAddress x _) = firstNumber x
-
--- Suffix
-
-class FirstSuffix a where
   firstSuffix :: a -> B.ByteString
-
-instance FirstSuffix StreetNumber where
-  firstSuffix (One (Single _ _ (Suffix x)))     = toField x
-  firstSuffix (Range (Single _ _ (Suffix x)) _) = toField x
-
-instance FirstSuffix StreetAddress where
-  firstSuffix (StAddr x _ _) = firstSuffix x
-
-instance FirstSuffix AddressLocation where
-  firstSuffix (AStreetAddress x) = firstSuffix x
-  firstSuffix _                  = mempty
-
-instance FirstSuffix AuAddress where
-  firstSuffix (AuAddress x _) = firstSuffix x
-
--- | Last
-
--- Prefix
-
-class LastPrefix a where
   lastPrefix :: a -> B.ByteString
-
-instance LastPrefix StreetNumber where
-  lastPrefix (One _)                           = mempty
-  lastPrefix (Range _ (Single (Prefix x) _ _)) = toField x
-
-instance LastPrefix StreetAddress where
-  lastPrefix (StAddr x _ _) = lastPrefix x
-
-instance LastPrefix AddressLocation where
-  lastPrefix (AStreetAddress x) = lastPrefix x
-  lastPrefix _                  = mempty
-
-instance LastPrefix AuAddress where
-  lastPrefix (AuAddress x _) = lastPrefix x
-
--- Number
-
-class LastNumber a where
   lastNumber :: a -> B.ByteString
-
-instance LastNumber StreetNumber where
-  lastNumber (One _)                           = mempty
-  lastNumber (Range _ (Single _ (Number x) _)) = toField x
-
-instance LastNumber StreetAddress where
-  lastNumber (StAddr x _ _) = lastNumber x
-
-instance LastNumber AddressLocation where
-  lastNumber (AStreetAddress x) = lastNumber x
-  lastNumber _                  = mempty
-
-instance LastNumber AuAddress where
-  lastNumber (AuAddress x _) = lastNumber x
-
--- Suffix
-
-class LastSuffix a where
   lastSuffix :: a -> B.ByteString
 
-instance LastSuffix StreetNumber where
+instance AddressNumbers StreetNumber where
+  firstPrefix (One (Single (Prefix x) _ _))     = toField x
+  firstPrefix (Range (Single (Prefix x) _ _) _) = toField x
+  firstNumber (One (Single _ (Number x) _))     = toField x
+  firstNumber (Range (Single _ (Number x) _) _) = toField x
+  firstSuffix (One (Single _ _ (Suffix x)))     = toField x
+  firstSuffix (Range (Single _ _ (Suffix x)) _) = toField x
+  lastPrefix (One _)                           = mempty
+  lastPrefix (Range _ (Single (Prefix x) _ _)) = toField x
+  lastNumber (One _)                           = mempty
+  lastNumber (Range _ (Single _ (Number x) _)) = toField x
   lastSuffix (One _)                           = mempty
   lastSuffix (Range _ (Single _ _ (Suffix x))) = toField x
 
-instance LastSuffix StreetAddress where
+instance AddressNumbers StreetAddress where
+  firstPrefix (StAddr x _ _) = firstPrefix x
+  firstNumber (StAddr x _ _) = firstNumber x
+  firstSuffix (StAddr x _ _) = firstSuffix x
+  lastPrefix (StAddr x _ _) = lastPrefix x
+  lastNumber (StAddr x _ _) = lastNumber x
   lastSuffix (StAddr x _ _) = lastSuffix x
 
-instance LastSuffix AddressLocation where
+instance AddressNumbers AddressLocation where
+  firstPrefix (AStreetAddress x) = firstPrefix x
+  firstPrefix _                  = mempty
+  firstNumber (AStreetAddress x) = firstNumber x
+  firstNumber _                  = mempty
+  firstSuffix (AStreetAddress x) = firstSuffix x
+  firstSuffix _                  = mempty
+  lastPrefix (AStreetAddress x) = lastPrefix x
+  lastPrefix _                  = mempty
+  lastNumber (AStreetAddress x) = lastNumber x
+  lastNumber _                  = mempty
   lastSuffix (AStreetAddress x) = lastSuffix x
   lastSuffix _                  = mempty
 
-instance LastSuffix AuAddress where
+instance AddressNumbers AuAddress where
+  firstPrefix (AuAddress x _) = firstPrefix x
+  firstNumber (AuAddress x _) = firstNumber x
+  firstSuffix (AuAddress x _) = firstSuffix x
+  lastPrefix (AuAddress x _) = lastPrefix x
+  lastNumber (AuAddress x _) = lastNumber x
   lastSuffix (AuAddress x _) = lastSuffix x
+
+-- | StAddrFields
+
+class StAddrFields a where
+  streetName :: a -> B.ByteString
+  streetType :: a -> B.ByteString
+
+instance StAddrFields StreetAddress where
+  streetName (StAddr _ (StreetName x) _) = toField x
+  streetType (StAddr _ _ (StreetType x)) = toField x
+
+instance StAddrFields AddressLocation where
+  streetName (AStreetAddress x) = streetName x
+  streetName _                  = mempty
+  streetType (AStreetAddress x) = streetType x
+  streetType _                  = mempty
+
+instance StAddrFields AuAddress where
+  streetName (AuAddress x _) = streetName x
+  streetType (AuAddress x _) = streetType x
 
 -- | Finalising
 
 instance ToNamedRecord Abstracts where
   toNamedRecord (Abstracts _id _ab) =
-    namedRecord [ "id" .= _id
-                , "addressType" .= addressType _ab
-                , "boxNr" .= boxNr _ab
-                , "firstPrefix" .= firstPrefix _ab
-                , "firstNumber" .= firstNumber _ab
-                , "firstSuffix" .= firstSuffix _ab
-                , "lastPrefix" .= lastPrefix _ab
-                , "lastNumber" .= lastNumber _ab
-                , "lastSuffix" .= lastSuffix _ab
-                , "suburb" .= get _suburb
-                , "state" .= get _state
-                , "postcode" .= get _postcode
+    namedRecord [ "01.id" .= _id
+                , "02.addressType" .= addressType _ab
+                , "03.boxNr" .= boxNr _ab
+                , "04.firstPrefix" .= firstPrefix _ab
+                , "05.firstNumber" .= firstNumber _ab
+                , "06.firstSuffix" .= firstSuffix _ab
+                , "07.lastPrefix" .= lastPrefix _ab
+                , "08.lastNumber" .= lastNumber _ab
+                , "09.lastSuffix" .= lastSuffix _ab
+                , "10.streetName" .= streetName _ab
+                , "11.streetType" .= streetType _ab
+                , "12.suburb" .= get _suburb
+                , "13.state" .= get _state
+                , "14.postcode" .= get _postcode
                 ]
     where
       get f = toField $ f $ getLocality _ab
