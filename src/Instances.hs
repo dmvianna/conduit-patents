@@ -5,12 +5,8 @@ module Instances where
 import           Control.Monad               (mzero)
 import qualified Data.ByteString             as B
 import           Data.CaseInsensitive
-import           Data.CSV.Conduit
 import           Data.CSV.Conduit.Conversion
-import           Data.Text                   (Text)
-import qualified Data.Text                   as T
 import           Data.Text.Encoding          (encodeUtf8)
-import qualified Data.Vector                 as V
 import           Text.Trifecta
 
 import           Addresses
