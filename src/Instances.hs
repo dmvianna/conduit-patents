@@ -96,6 +96,34 @@ instance ToField State where
 instance ToField Postcode where
   toField (Postcode x) = encodeUtf8 x
 
+-- | Street Number
+
+instance ToField Suffix where
+  toField (Suffix x) = encodeUtf8 x
+
+instance ToField Prefix where
+  toField (Prefix x) = encodeUtf8 x
+
+instance ToField Number where
+  toField (Number x) = encodeUtf8 x
+
+class FirstPrefix a where
+  firstPrefix :: a -> B.ByteString
+
+instance FirstPrefix StreetNumber where
+  firstPrefix (One (Single x _ _))     = toField x
+  firstPrefix (Range (Single x _ _) _) = toField x
+
+instance FirstPrefix StreetAddress where
+  firstPrefix (StAddr x _ _) = firstPrefix x
+
+instance FirstPrefix AddressLocation where
+  firstPrefix (AStreetAddress x) = firstPrefix x
+  firstPrefix _                  = mempty
+
+instance FirstPrefix AuAddress where
+  firstPrefix (AuAddress x _) = firstPrefix x
+
 -- | Finalising
 
 instance ToNamedRecord Abstracts where
@@ -103,7 +131,10 @@ instance ToNamedRecord Abstracts where
     namedRecord [ "id" .= _id
                 , "addressType" .= addressType _abstract
                 , "boxNr" .= boxNr _abstract
-                , "suburb" .= (toField $ _suburb $ getLocality _abstract)
-                , "state" .= (toField $ _state $ getLocality _abstract)
-                , "postcode" .= (toField $ _postcode $ getLocality _abstract)
+                , "firstPrefix" .= firstPrefix _abstract
+                , "suburb" .= get _suburb
+                , "state" .= get _state
+                , "postcode" .= get _postcode
                 ]
+    where
+      get f = toField $ f $ getLocality _abstract
